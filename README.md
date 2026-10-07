@@ -1,12 +1,8 @@
 # ✈️ Predictive Maintenance: Aircraft Engine Remaining Useful Life (RUL)
 
-An ensemble machine learning system that predicts how many operating cycles remain before an aircraft engine fails, using real sensor data — built to explore predictive maintenance, a genuine high-value industrial ML problem.
+I used NASA C-MAPSS sensor data to explore how machine learning can estimate an engine's remaining operating cycles. I compared XGBoost, LightGBM, and CatBoost, tuned them with Optuna, and tested whether averaging their predictions improved the results.
 
-## The problem
-
-Industrial equipment maintenance faces a tradeoff: **reactive maintenance** (wait until it breaks) causes costly downtime and safety risk, while **fixed-schedule maintenance** wastes money replacing parts that still have life left. **Predictive maintenance** uses live sensor data to estimate a machine's actual remaining useful life (RUL), so maintenance happens exactly when needed.
-
-This project predicts RUL for aircraft turbofan engines using the NASA C-MAPSS dataset — the industry-standard benchmark for prognostics research, used in 1,000+ published papers.
+The main challenge was evaluating the models on engines they had not seen during training. I also looked at the PHM08 score, which treats overestimating remaining life as more costly than predicting failure too early. This is a benchmark study, not a deployed aircraft maintenance system.
 
 ## Approach
 
@@ -17,7 +13,7 @@ This project predicts RUL for aircraft turbofan engines using the NASA C-MAPSS d
    - Piecewise-linear RUL target, capped at 125 cycles — standard practice, since sensors show no degradation signal during an engine's healthy phase
 3. **Validation**: engine-level train/validation split (never row-level, to avoid leaking cycles from the same engine across splits)
 4. **Models**: XGBoost, LightGBM, CatBoost — each hyperparameter-tuned with **Optuna**, optimized directly against the domain's real scoring metric (not a generic proxy)
-5. **Evaluation metric**: the official **PHM08 asymmetric score** — penalizes late RUL predictions (dangerously underestimating remaining life) far more heavily than early ones, unlike standard RMSE which treats both equally
+5. **Evaluation metric**: the official **PHM08 asymmetric score** — penalizes late RUL predictions (dangerously overestimating remaining life) far more heavily than early ones, unlike standard RMSE which treats both equally
 6. **Ensembling**: simple and inverse-score-weighted averaging of the three tuned models
 
 ## Results
@@ -74,4 +70,4 @@ jupyter notebook analysis.ipynb
 
 ## Author
 
-Thotakura Tagore — M.Sc. Artificial Intelligence and Data Science, Deggendorf Institute of Technology
+Tagore Thotakura — M.Sc. Artificial Intelligence and Data Science, Deggendorf Institute of Technology
